@@ -2,6 +2,7 @@ package com.company;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Stack;
 
 public class Main {
 
@@ -9,18 +10,17 @@ public class Main {
 
         color[v] = 1;
 
-        for(var i = 0;i<graph[v].length;i++){
+        for (var i = 0; i < graph[v].length; i++) {
 
-            if(graph[v][i] == 1){
+            if (graph[v][i] == 1) {
 
-                if(color[i] == 0){
+                if (color[i] == 0) {
 
-                    if(dfs(i,color,graph)){
+                    if (dfs(i, color, graph)) {
 
                         return true;
                     }
-                }
-                else if (color[i] == 1){
+                } else if (color[i] == 1) {
 
                     return true;
                 }
@@ -32,17 +32,17 @@ public class Main {
         return false;
     }
 
-    private static void dfs(int v,byte[] used, byte[][] graph, ArrayList<Integer> ans){
+    private static void dfs(int v, byte[] used, byte[][] graph, ArrayList<Integer> ans) {
 
         used[v] = 1;
 
-        for(var i = 0;i<graph[v].length;i++){
+        for (var i = 0; i < graph[v].length; i++) {
 
-            if(graph[v][i] == 1){
+            if (graph[v][i] == 1) {
 
-                if(used[i] == 0){
+                if (used[i] == 0) {
 
-                    dfs(i,used,graph,ans);
+                    dfs(i, used, graph, ans);
                 }
             }
         }
@@ -64,31 +64,31 @@ public class Main {
 
         var isImpossible = false;
 
-        if(n == 1){
+        if (n == 1) {
 
-            for(int i = 0;i<26;i++){
+            for (int i = 0; i < 26; i++) {
 
                 var code = 97 + i;
 
-                System.out.print((char)code);
+                System.out.print((char) code);
             }
 
             return;
         }
 
-        for(var i = 1;i<n;i++){
+        for (var i = 1; i < n; i++) {
 
             var name = in.nextLine();
 
             var equal = true;
 
-            for(var j = 0;j<Math.min(name.length(),lastName.length());j++){
+            for (var j = 0; j < Math.min(name.length(), lastName.length()); j++) {
 
-                if(name.charAt(j) != lastName.charAt(j)){
+                if (name.charAt(j) != lastName.charAt(j)) {
 
-                    var index1 = (int)name.charAt(j) - 97;
+                    var index1 = (int) name.charAt(j) - 97;
 
-                    var index2 = (int)lastName.charAt(j) - 97;
+                    var index2 = (int) lastName.charAt(j) - 97;
 
                     graph[index1][index2] = 1;
 
@@ -98,7 +98,7 @@ public class Main {
                 }
             }
 
-            if(equal && name.length() < lastName.length()){
+            if (equal && name.length() < lastName.length()) {
 
                 isImpossible = true;
 
@@ -108,9 +108,9 @@ public class Main {
             lastName = name;
         }
 
-        for(var i = 0;i<26;i++){
+        for (var i = 0; i < 26; i++) {
 
-            if(dfs(i,color,graph)){
+            if (dfs(i, color, graph)) {
 
                 isImpossible = true;
 
@@ -118,36 +118,35 @@ public class Main {
             }
         }
 
-        if(isImpossible){
+        if (isImpossible) {
 
             System.out.println("Impossible");
 
             return;
         }
 
-        for(var i = 0;i<26;i++){
+        for (var i = 0; i < 26; i++) {
 
             color[i] = 0;
         }
 
         ArrayList<Integer> ans = new ArrayList<Integer>();
 
-        for(var i = 0;i<26;i++){
+        for (var i = 0; i < 26; i++) {
 
-            if(color[i] == 0){
+            if (color[i] == 0) {
 
-                dfs(i,color,graph,ans);
+                dfs(i, color, graph, ans);
             }
         }
 
-        for(var i = 0;i<ans.size();i++){
 
-            var code = 97+ans.get(i);
+        for (var i = 0; i < ans.size(); i++) {
+
+            var code = 97 + ans.get(i);
 
             System.out.print((char) code);
         }
-
-
 
     }
 }
