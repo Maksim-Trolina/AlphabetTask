@@ -1,8 +1,6 @@
 package com.company;
 
-import java.util.Scanner;
 import java.util.Stack;
-
 
 
 public class Alphabet {
@@ -14,24 +12,15 @@ public class Alphabet {
         BLACK
     }
 
-    private static final byte ALPHABET_SIZE = 26;
+    private final byte ALPHABET_SIZE = 26;
 
-    private static final boolean[][] GRAPH = new boolean[ALPHABET_SIZE][ALPHABET_SIZE];
+    private final boolean[][] GRAPH = new boolean[ALPHABET_SIZE][ALPHABET_SIZE];
 
-    private static final Color[] COLORS = new Color[ALPHABET_SIZE];
+    private final Color[] COLORS = new Color[ALPHABET_SIZE];
 
-    private static final byte FIRST_LETTER_CODE = 97;
+    private final byte FIRST_LETTER_CODE = 97;
 
-    private static final String DEFAULT_RESPONSE = "Impossible";
-
-    /*public Alphabet() {
-
-        COLORS = new Color[ALPHABET_SIZE];
-
-        GRAPH = new boolean[ALPHABET_SIZE][ALPHABET_SIZE];
-    }*/
-
-    private static boolean dfs(int vertex) {
+    private boolean dfs(int vertex) {
 
         COLORS[vertex] = Color.GRAY;
 
@@ -57,7 +46,7 @@ public class Alphabet {
         return false;
     }
 
-    private static void dfs(int vertex, Stack<Integer> alphabetOrder) {
+    private void dfs(int vertex, Stack<Integer> alphabetOrder) {
 
         COLORS[vertex] = Color.GRAY;
 
@@ -75,7 +64,7 @@ public class Alphabet {
         alphabetOrder.push(vertex);
     }
 
-    private static boolean isCycle() {
+    private boolean isCycle() {
 
         for (var i = 0; i < ALPHABET_SIZE; i++) {
 
@@ -88,7 +77,7 @@ public class Alphabet {
         return false;
     }
 
-    private static void resetColor() {
+    private void resetColor() {
 
         for (var i = 0; i < ALPHABET_SIZE; i++) {
 
@@ -96,21 +85,21 @@ public class Alphabet {
         }
     }
 
-    private static String getDefaultAlphabet() {
+    private String getDefaultAlphabet() {
 
-        var result = "";
+        var result = new StringBuilder();
 
         for (var i = 0; i < ALPHABET_SIZE; i++) {
 
             var code = FIRST_LETTER_CODE + i;
 
-            result += (char) code;
+            result.append((char) code);
         }
 
-        return result;
+        return result.toString();
     }
 
-    private static boolean isEqual(String firstStr, String secondStr) {
+    private boolean isEqual(String firstStr, String secondStr) {
 
         for (var j = 0; j < Math.min(firstStr.length(), secondStr.length()); j++) {
 
@@ -129,7 +118,7 @@ public class Alphabet {
         return true;
     }
 
-    private static Stack<Integer> topological_sort() {
+    private Stack<Integer> topological_sort() {
 
         Stack<Integer> alphabetOrder = new Stack<>();
 
@@ -144,55 +133,39 @@ public class Alphabet {
         return alphabetOrder;
     }
 
-    private static String createAlphabet(Stack<Integer> alphabetOrder) {
+    private String createAlphabet(Stack<Integer> alphabetOrder) {
 
-        var alphabet = "";
+        var alphabet = new StringBuilder();
 
         while (!alphabetOrder.empty()) {
 
             var code = FIRST_LETTER_CODE + alphabetOrder.pop();
 
-            alphabet += (char) code;
+            alphabet.append((char) code);
         }
 
-        return alphabet;
+        return alphabet.toString();
     }
 
-    public static void main(String[] args) {
+    public String solve(String[] names) throws Exception {
 
-        Scanner in = new Scanner(System.in);
+        if (names.length == 1) {
 
-        var wordCount = Integer.parseInt(in.nextLine());
-
-        var lastName = in.nextLine();
+            return getDefaultAlphabet();
+        }
 
         var isImpossible = false;
 
-        String alphabet;
+        for (var i = 1; i < names.length; i++) {
 
-        if (wordCount == 1) {
+            var equal = isEqual(names[i], names[i - 1]);
 
-            alphabet = getDefaultAlphabet();
-
-            System.out.println(alphabet);
-
-            return;
-        }
-
-        for (var i = 1; i < wordCount; i++) {
-
-            var name = in.nextLine();
-
-            var equal = isEqual(name, lastName);
-
-            if (equal && name.length() < lastName.length()) {
+            if (equal && names[i].length() < names[i - 1].length()) {
 
                 isImpossible = true;
 
                 break;
             }
-
-            lastName = name;
         }
 
         resetColor();
@@ -201,17 +174,13 @@ public class Alphabet {
 
         if (isImpossible) {
 
-            System.out.println(DEFAULT_RESPONSE);
-
-            return;
+            throw new Exception("Impossible");
         }
 
         resetColor();
 
         var alphabetOrder = topological_sort();
 
-        alphabet = createAlphabet(alphabetOrder);
-
-        System.out.println(alphabet);
+        return createAlphabet(alphabetOrder);
     }
 }

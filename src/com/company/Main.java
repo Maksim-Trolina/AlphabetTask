@@ -1,157 +1,40 @@
 package com.company;
 
-import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Main {
 
-    private static boolean dfs(int v, byte[] color, byte[][] graph) {
+    private static String[] read() {
 
-        color[v] = 1;
+        var in = new Scanner(System.in);
 
-        for (var i = 0; i < graph[v].length; i++) {
+        var wordCount = Integer.parseInt(in.nextLine());
 
-            if (graph[v][i] == 1) {
+        var names = new String[wordCount];
 
-                if (color[i] == 0) {
+        for (var i = 0; i < wordCount; i++) {
 
-                    if (dfs(i, color, graph)) {
-
-                        return true;
-                    }
-                } else if (color[i] == 1) {
-
-                    return true;
-                }
-            }
+            names[i] = in.nextLine();
         }
 
-        color[v] = 2;
-
-        return false;
-    }
-
-    private static void dfs(int v, byte[] used, byte[][] graph, ArrayList<Integer> ans) {
-
-        used[v] = 1;
-
-        for (var i = 0; i < graph[v].length; i++) {
-
-            if (graph[v][i] == 1) {
-
-                if (used[i] == 0) {
-
-                    dfs(i, used, graph, ans);
-                }
-            }
-        }
-
-        ans.add(v);
+        return names;
     }
 
     public static void main(String[] args) {
 
-        Alphabet alphabet = new Alphabet();
+        var names = read();
 
-        alphabet.main();
+        var alphabet = new Alphabet();
 
-        /*var res = alphabet.solve();
+        try {
 
-        System.out.println(res);*/
-        /*byte[] color = new byte[26];
+            var result = alphabet.solve(names);
 
-        Scanner in = new Scanner(System.in);
+            System.out.println(result);
+        } catch (Exception e) {
 
-        int n = Integer.parseInt(in.nextLine());
-
-        byte[][] graph = new byte[26][26];
-
-        var lastName = in.nextLine();
-
-        var isImpossible = false;
-
-        if (n == 1) {
-
-            for (int i = 0; i < 26; i++) {
-
-                var code = 97 + i;
-
-                System.out.print((char) code);
-            }
-
-            return;
+            System.out.println(e.getMessage());
         }
-
-        for (var i = 1; i < n; i++) {
-
-            var name = in.nextLine();
-
-            var equal = true;
-
-            for (var j = 0; j < Math.min(name.length(), lastName.length()); j++) {
-
-                if (name.charAt(j) != lastName.charAt(j)) {
-
-                    var index1 = (int) name.charAt(j) - 97;
-
-                    var index2 = (int) lastName.charAt(j) - 97;
-
-                    graph[index1][index2] = 1;
-
-                    equal = false;
-
-                    break;
-                }
-            }
-
-            if (equal && name.length() < lastName.length()) {
-
-                isImpossible = true;
-
-                break;
-            }
-
-            lastName = name;
-        }
-
-        for (var i = 0; i < 26; i++) {
-
-            if (dfs(i, color, graph)) {
-
-                isImpossible = true;
-
-                break;
-            }
-        }
-
-        if (isImpossible) {
-
-            System.out.println("Impossible");
-
-            return;
-        }
-
-        for (var i = 0; i < 26; i++) {
-
-            color[i] = 0;
-        }
-
-        ArrayList<Integer> ans = new ArrayList<Integer>();
-
-        for (var i = 0; i < 26; i++) {
-
-            if (color[i] == 0) {
-
-                dfs(i, color, graph, ans);
-            }
-        }
-
-
-        for (var i = 0; i < ans.size(); i++) {
-
-            var code = 97 + ans.get(i);
-
-            System.out.print((char) code);
-        }*/
-
     }
 }
+
