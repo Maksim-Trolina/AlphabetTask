@@ -1,101 +1,189 @@
 package com.company;
 
-import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Stack;
+
+
 
 public class Alphabet {
 
-    private static boolean dfs(int v, byte[] color, byte[][] graph) {
+    enum Color {
 
-        color[v] = 1;
+        WHITE,
+        GRAY,
+        BLACK
+    }
 
-        for (var i = 0; i < graph[v].length; i++) {
+    private static final byte ALPHABET_SIZE = 26;
 
-            if (graph[v][i] == 1) {
+    private static final boolean[][] GRAPH = new boolean[ALPHABET_SIZE][ALPHABET_SIZE];
 
-                if (color[i] == 0) {
+    private static final Color[] COLORS = new Color[ALPHABET_SIZE];
 
-                    if (dfs(i, color, graph)) {
+    private static final byte FIRST_LETTER_CODE = 97;
+
+    private static final String DEFAULT_RESPONSE = "Impossible";
+
+    /*public Alphabet() {
+
+        COLORS = new Color[ALPHABET_SIZE];
+
+        GRAPH = new boolean[ALPHABET_SIZE][ALPHABET_SIZE];
+    }*/
+
+    private static boolean dfs(int vertex) {
+
+        COLORS[vertex] = Color.GRAY;
+
+        for (var i = 0; i < GRAPH[vertex].length; i++) {
+
+            if (GRAPH[vertex][i]) {
+
+                if (COLORS[i] == Color.WHITE) {
+
+                    if (dfs(i)) {
 
                         return true;
                     }
-                } else if (color[i] == 1) {
+                } else if (COLORS[i] == Color.GRAY) {
 
                     return true;
                 }
             }
         }
 
-        color[v] = 2;
+        COLORS[vertex] = Color.BLACK;
 
         return false;
     }
 
-    private static void dfs(int v, byte[] used, byte[][] graph, ArrayList<Integer> ans) {
+    private static void dfs(int vertex, Stack<Integer> alphabetOrder) {
 
-        used[v] = 1;
+        COLORS[vertex] = Color.GRAY;
 
-        for (var i = 0; i < graph[v].length; i++) {
+        for (var i = 0; i < GRAPH[vertex].length; i++) {
 
-            if (graph[v][i] == 1) {
+            if (GRAPH[vertex][i]) {
 
-                if (used[i] == 0) {
+                if (COLORS[i] == Color.WHITE) {
 
-                    dfs(i, used, graph, ans);
+                    dfs(i, alphabetOrder);
                 }
             }
         }
 
-        ans.add(v);
+        alphabetOrder.push(vertex);
     }
 
-    public void solve(){
+    private static boolean isCycle() {
 
-        byte[] color = new byte[26];
+        for (var i = 0; i < ALPHABET_SIZE; i++) {
+
+            if (dfs(i)) {
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static void resetColor() {
+
+        for (var i = 0; i < ALPHABET_SIZE; i++) {
+
+            COLORS[i] = Color.WHITE;
+        }
+    }
+
+    private static String getDefaultAlphabet() {
+
+        var result = "";
+
+        for (var i = 0; i < ALPHABET_SIZE; i++) {
+
+            var code = FIRST_LETTER_CODE + i;
+
+            result += (char) code;
+        }
+
+        return result;
+    }
+
+    private static boolean isEqual(String firstStr, String secondStr) {
+
+        for (var j = 0; j < Math.min(firstStr.length(), secondStr.length()); j++) {
+
+            if (firstStr.charAt(j) != secondStr.charAt(j)) {
+
+                var indexFirst = (int) firstStr.charAt(j) - FIRST_LETTER_CODE;
+
+                var indexSecond = (int) secondStr.charAt(j) - FIRST_LETTER_CODE;
+
+                GRAPH[indexSecond][indexFirst] = true;
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static Stack<Integer> topological_sort() {
+
+        Stack<Integer> alphabetOrder = new Stack<>();
+
+        for (var i = 0; i < ALPHABET_SIZE; i++) {
+
+            if (COLORS[i] == Color.WHITE) {
+
+                dfs(i, alphabetOrder);
+            }
+        }
+
+        return alphabetOrder;
+    }
+
+    private static String createAlphabet(Stack<Integer> alphabetOrder) {
+
+        var alphabet = "";
+
+        while (!alphabetOrder.empty()) {
+
+            var code = FIRST_LETTER_CODE + alphabetOrder.pop();
+
+            alphabet += (char) code;
+        }
+
+        return alphabet;
+    }
+
+    public static void main(String[] args) {
 
         Scanner in = new Scanner(System.in);
 
-        int n = Integer.parseInt(in.nextLine());
-
-        byte[][] graph = new byte[26][26];
+        var wordCount = Integer.parseInt(in.nextLine());
 
         var lastName = in.nextLine();
 
         var isImpossible = false;
 
-        if (n == 1) {
+        String alphabet;
 
-            for (int i = 0; i < 26; i++) {
+        if (wordCount == 1) {
 
-                var code = 97 + i;
+            alphabet = getDefaultAlphabet();
 
-                System.out.print((char) code);
-            }
+            System.out.println(alphabet);
 
             return;
         }
 
-        for (var i = 1; i < n; i++) {
+        for (var i = 1; i < wordCount; i++) {
 
             var name = in.nextLine();
 
-            var equal = true;
-
-            for (var j = 0; j < Math.min(name.length(), lastName.length()); j++) {
-
-                if (name.charAt(j) != lastName.charAt(j)) {
-
-                    var index1 = (int) name.charAt(j) - 97;
-
-                    var index2 = (int) lastName.charAt(j) - 97;
-
-                    graph[index1][index2] = 1;
-
-                    equal = false;
-
-                    break;
-                }
-            }
+            var equal = isEqual(name, lastName);
 
             if (equal && name.length() < lastName.length()) {
 
@@ -107,44 +195,23 @@ public class Alphabet {
             lastName = name;
         }
 
-        for (var i = 0; i < 26; i++) {
+        resetColor();
 
-            if (dfs(i, color, graph)) {
-
-                isImpossible = true;
-
-                break;
-            }
-        }
+        isImpossible = isImpossible || isCycle();
 
         if (isImpossible) {
 
-            System.out.println("Impossible");
+            System.out.println(DEFAULT_RESPONSE);
 
             return;
         }
 
-        for (var i = 0; i < 26; i++) {
+        resetColor();
 
-            color[i] = 0;
-        }
+        var alphabetOrder = topological_sort();
 
-        ArrayList<Integer> ans = new ArrayList<Integer>();
+        alphabet = createAlphabet(alphabetOrder);
 
-        for (var i = 0; i < 26; i++) {
-
-            if (color[i] == 0) {
-
-                dfs(i, color, graph, ans);
-            }
-        }
-
-
-        for (var i = 0; i < ans.size(); i++) {
-
-            var code = 97 + ans.get(i);
-
-            System.out.print((char) code);
-        }
+        System.out.println(alphabet);
     }
 }

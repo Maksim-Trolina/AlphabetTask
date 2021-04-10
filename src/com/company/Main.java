@@ -1,8 +1,6 @@
 package com.company;
 
 import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.Stack;
 
 public class Main {
 
@@ -52,7 +50,14 @@ public class Main {
 
     public static void main(String[] args) {
 
-        byte[] color = new byte[26];
+        Alphabet alphabet = new Alphabet();
+
+        alphabet.main();
+
+        /*var res = alphabet.solve();
+
+        System.out.println(res);*/
+        /*byte[] color = new byte[26];
 
         Scanner in = new Scanner(System.in);
 
@@ -146,7 +151,7 @@ public class Main {
             var code = 97 + ans.get(i);
 
             System.out.print((char) code);
-        }
+        }*/
 
     }
 }
